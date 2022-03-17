@@ -3,6 +3,8 @@
 import matplotlib.pyplot as plt
 from prep_terrain_data import makeTerrainData
 from class_vis import prettyPicture
+from sklearn.metrics import accuracy_score
+from sklearn.neighbors import KNeighborsClassifier
 
 features_train, labels_train, features_test, labels_test = makeTerrainData()
 
@@ -19,8 +21,8 @@ bumpy_slow = [features_train[ii][1] for ii in range(0, len(features_train)) if l
 #### initial visualization
 plt.xlim(0.0, 1.0)
 plt.ylim(0.0, 1.0)
-plt.scatter(bumpy_fast, grade_fast, color = "b", label="fast")
-plt.scatter(grade_slow, bumpy_slow, color = "r", label="slow")
+plt.scatter(bumpy_fast, grade_fast, color="b", label="fast")
+plt.scatter(grade_slow, bumpy_slow, color="r", label="slow")
 plt.legend()
 plt.xlabel("bumpiness")
 plt.ylabel("grade")
@@ -30,11 +32,10 @@ plt.show()
 
 ### your code here!  name your classifier object clf if you want the 
 ### visualization code (prettyPicture) to show you the decision boundary
-
-
-
-
-
+clf_knn = KNeighborsClassifier(n_neighbors=4)
+clf_knn.fit(features_train, labels_train)
+pred_knn = clf_knn.predict(features_test)
+print("Accuracy kNN:", accuracy_score(labels_test, pred_knn))
 
 
 
