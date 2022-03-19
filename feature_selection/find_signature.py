@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-import _pickle as pickle
-import numpy as np
-np.random.seed(42)
+import pickle
+import numpy
+numpy.random.seed(42)
 
 
 ### The words (features) and authors (labels), already largely processed.
@@ -10,8 +10,8 @@ np.random.seed(42)
 ### mini-project.
 words_file = "../text_learning/your_word_data.pkl"
 authors_file = "../text_learning/your_email_authors.pkl"
-word_data = pickle.load(open(words_file, "rb"))
-authors = pickle.load(open(authors_file, "rb"))
+word_data = pickle.load(open(words_file, "r"))
+authors = pickle.load(open(authors_file, "r"))
 
 
 
@@ -27,7 +27,7 @@ vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                              stop_words='english')
 features_train = vectorizer.fit_transform(features_train)
 features_test  = vectorizer.transform(features_test).toarray()
-
+words = vectorizer.get_feature_names()
 
 ### a classic way to overfit is to use a small number
 ### of data points and a large number of features;
@@ -35,22 +35,21 @@ features_test  = vectorizer.transform(features_test).toarray()
 features_train = features_train[:150].toarray()
 labels_train   = labels_train[:150]
 
-print("Feature name: *** ", vectorizer.get_feature_names()[33614])
+
 
 ### your code goes here
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-clf = tree.DecisionTreeClassifier()
-clf = clf.fit(features_train, labels_train)
-labels_pred = clf.predict(features_test)
-acc = accuracy_score(labels_test, labels_pred)
-print(acc)
 
-feature_imp_list = clf.feature_importances_
-len(feature_imp_list)
+clf = DecisionTreeClassifier(min_samples_split=40)
+clf.fit(features_train, labels_train)
+pred = clf.predict(features_test)
+print("Accuracy:", accuracy_score(labels_test, pred))
 
-for i, val in np.ndenumerate(feature_imp_list):
-    if val > 0.2:
-        print(i, val)
-
-#vectorizer.get_feature_names()[33614]
+print("Important features:")
+for index, feature in enumerate(clf.feature_importances_):
+    if feature > 0.2:
+        print("feature no", index)
+        print("importance", feature)
+        print("word", words[index])
+        
